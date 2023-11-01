@@ -4,6 +4,25 @@
   
   
   <entry>
+    <title>hexo如何编写文章</title>
+    <link href="/2023/11/01/hexo%E5%A6%82%E4%BD%95%E7%BC%96%E5%86%99%E6%96%87%E7%AB%A0/"/>
+    <url>/2023/11/01/hexo%E5%A6%82%E4%BD%95%E7%BC%96%E5%86%99%E6%96%87%E7%AB%A0/</url>
+    
+    <content type="html"><![CDATA[<h4 id="hexo介绍"><a href="#hexo介绍" class="headerlink" title="hexo介绍"></a>hexo介绍</h4><p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 <a href="http://daringfireball.net/projects/markdown/">Markdown</a>（或其他标记语言）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。 </p><figure class="highlight plaintext"><figcaption><span><https://hexo.io/zh-cn/docs/></span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs 技术文档```"><br>#### 编写文章<br><br>首先在博客项目所在目录打开```Git Bash``` ，输入<br><br>```shell<br>$ hexo new [layout] &lt;title&gt;<br></code></pre></td></tr></table></figure><p>该命令会在<code>source</code> 文件夹或其子文件夹内生成一个md文件，而我们想写的文章内容就写在md文件内。</p><p>相关说明：</p><p><code>layout</code> 布局</p><p>hexo有三种默认布局：post，page，draft</p><p>不同布局的md文件会存储在不同的路径下</p><table><thead><tr><th>layout（布局）</th><th>路径</th></tr></thead><tbody><tr><td>post</td><td>source&#x2F;_posts</td></tr><tr><td>page</td><td>source</td></tr><tr><td>draft</td><td>source&#x2F;_draft</td></tr></tbody></table><p>其中post为默认布局，可以通过修改 <code>_config.yml</code> 中的 <code>default_layout</code> 参数来指定默认布局。 </p><p><code>title</code> 文件名称</p><p>生成的md文件默认使用title作为文件名，可以通过修改 <code>_config.yml</code> 中的 <code>new_post_name </code> 参数来指定新建post布局文件的命名方法。 </p><table><thead><tr><th>变量</th><th>描述</th></tr></thead><tbody><tr><td><code>:title</code></td><td>标题（小写，空格将会被替换为短杠）</td></tr><tr><td><code>:year</code></td><td>建立的年份，比如， <code>2015</code></td></tr><tr><td><code>:month</code></td><td>建立的月份（有前导零），比如， <code>04</code></td></tr><tr><td><code>:i_month</code></td><td>建立的月份（无前导零），比如， <code>4</code></td></tr><tr><td><code>:day</code></td><td>建立的日期（有前导零），比如， <code>07</code></td></tr><tr><td><code>:i_day</code></td><td>建立的日期（无前导零），比如， <code>7</code></td></tr></tbody></table><p><code>layout</code> 草稿</p><p><code>Scaffold</code> 模板</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>hexo</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>我的第一篇博客</title>
     <link href="/2023/11/01/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/"/>
     <url>/2023/11/01/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/</url>
