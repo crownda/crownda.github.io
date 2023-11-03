@@ -4,6 +4,25 @@
   
   
   <entry>
+    <title>学习Git的第一天</title>
+    <link href="/2023/11/01/%E5%AD%A6%E4%B9%A0Git%E7%9A%84%E7%AC%AC%E4%B8%80%E5%A4%A9/"/>
+    <url>/2023/11/01/%E5%AD%A6%E4%B9%A0Git%E7%9A%84%E7%AC%AC%E4%B8%80%E5%A4%A9/</url>
+    
+    <content type="html"><![CDATA[<h3 id="Git-分布式版本控制工具"><a href="#Git-分布式版本控制工具" class="headerlink" title="Git 分布式版本控制工具"></a>Git 分布式版本控制工具</h3><p>####为什么需要版本控制工具？</p><p>一个项目的编写往往需要多人长期合作完成，在此期间避免不了各种问题。比如写完一个模块要上线了结果电脑死机，硬盘完全损毁；某天你喝醉了心血来潮写了一堆不合格的代码写入了项目中，你还忘记那些是当时写入的等各种情况。这时候就需要一个版本控制工具解决类似场景问题。</p><h4 id="版本控制器的方式"><a href="#版本控制器的方式" class="headerlink" title="版本控制器的方式"></a>版本控制器的方式</h4><p><code>集中式版本控制工具</code> </p><p>版本库集中存放在中央服务器，团队中的每个成员都可以从服务器上下载代码，但必须联网（局域网或互联网）实现，个人修改后提交到中央版本库。常见的有<code>SVN</code>和<code>CVS</code></p><p><code>分布式版本控制工具</code></p><p>分布式版本控制系统没有“中央服务器”，而是把版本库存放在每个人的电脑上，所以工作时不需要联网，多人协作只需要把各自的修改互相推送就可以看到别人的修改了。常见的<code>git</code></p><p><code>简结</code> 集中式版本控制工具的应用类似每个人从厂里（中央服务器）拿回（下载）原料（代码），加工好（修改完）后提交给厂里。缺点是如果厂（中央的版本库）没了就啥都没了，也就是备份问题未完全解决。分布式版本控制工具则是鸡蛋不放一个篮子的道理。类比一副电子画，每个人的电脑都有，添加一笔后和其他人交流。</p><h4 id="Git"><a href="#Git" class="headerlink" title="Git"></a>Git</h4><p>Git不需要有中央服务器，设置中央服务器的目的是方便大家交换修改。把它当做一个只交流修改本身不工作的时刻在线的同事就行。Git是Linux的缔造者之一为了管理Linux内核开发而开发的开源版本控制软件。</p><h4 id="Git常见指令"><a href="#Git常见指令" class="headerlink" title="Git常见指令"></a>Git常见指令</h4><p><code>git init</code> 初始化当前目录为一个Git本地仓库，在当前目录下会生成一个<code>.git</code> 的文件夹，默认生成master分支</p><p><code>git add 文件名 </code> (工作区  &#x3D;&#x3D;&#x3D;&gt;   暂存区，文件名用.代替的话就是工作区所有修改文件&#x3D;&#x3D;&#x3D;&gt;暂存区)</p><p><code>git commit</code> (暂存区  &#x3D;&#x3D;&#x3D;&gt;   本地仓库)    <code>git commit  -m  &quot;提交内容描述&quot;</code> (暂存区  &#x3D;&#x3D;&#x3D;&gt;  本地仓库，在Git日志里为本次操作命名)</p><p><code>git status</code> 查看修改的状态（在工作区或暂存区的）</p><p><code>git log</code> 查看提交日志，日志里每个操作对对应一个哈希值，因为git的智能处理我们不需要用完整的哈希值去完成其他操作</p><p><code>git reset</code> 暂存区的修改恢复到工作区</p><p><code>git reset &lt;location&gt;</code> 当前分支记录回退几个提交记录来撤销改动。</p><p><code>git revert</code> 适合需要回退版本并提交给别人看，会提交撤销之前的提交的新提交，提交后新建一个节点，该节点和需要回退到的节点一样。</p><p><code>git checkout -b &lt;new-branch-name&gt;</code> 新建分支（branch）并切换到该分支，若去掉参数<code>-b</code> 就仅切换。实际切换的HEAD的指向，也可以切换到某次提交。配合^和~number使用更好</p><p><code>git branch -a</code> 查看当前本地和远程有那些分支，若去掉参数<code>-a</code> 就查看当前本地有那些分支。</p><p><code>git branch &lt;branch-name&gt; &lt;location&gt;</code> 强制修改分支位置</p><p><code>git branch &lt;new-branch-name&gt;</code> 创建新分支</p><p><code> git merge &lt;branch-name&gt;</code> 将该分支合并到master分支</p><p><code>git rebase &lt;branch-name&gt;</code> 将该分支以另一种方式合并到另一个分支</p><p><code>git rebase -i &lt;参数值&gt; </code> 打开交互式UI界面操作提交记录</p><p><code>git pull</code> 从远程仓库拉取最新的代码到本地的仓库并合并到当前分支</p><p><code>git fetch</code> 从远程仓库获取本地仓库中缺失的提交</p><p><code>git cherry-pick &lt;提交号&gt;</code> 将某个提交复制粘贴到当前位置下</p><p><code>git clone &lt;url&gt; &lt;file-name&gt;</code> 克隆（下载）一个地址为url的远程Git仓库到本地，将其存放在file-name文件夹里</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>study</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>hexo如何编写文章</title>
     <link href="/2023/11/01/hexo%E5%A6%82%E4%BD%95%E7%BC%96%E5%86%99%E6%96%87%E7%AB%A0/"/>
     <url>/2023/11/01/hexo%E5%A6%82%E4%BD%95%E7%BC%96%E5%86%99%E6%96%87%E7%AB%A0/</url>
