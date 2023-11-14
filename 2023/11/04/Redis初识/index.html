@@ -1,0 +1,967 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="crown">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Redis入门是什么 Remote Dictionary Server（远程数据服务）  C语言编写 一种支持key-value等多种数据结构的存储系统 **内存高速缓存数据库 **  为什么良好的特性  读写性能优异 Redis能读的速度是110000次&#x2F;s,写的速度是81000次&#x2F;s 。   数据类型丰富 Redis支持二进制案例的 Strings, Lists, Hash">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis初识">
+<meta property="og:url" content="http://example.com/2023/11/04/Redis%E5%88%9D%E8%AF%86/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Redis入门是什么 Remote Dictionary Server（远程数据服务）  C语言编写 一种支持key-value等多种数据结构的存储系统 **内存高速缓存数据库 **  为什么良好的特性  读写性能优异 Redis能读的速度是110000次&#x2F;s,写的速度是81000次&#x2F;s 。   数据类型丰富 Redis支持二进制案例的 Strings, Lists, Hash">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-11-04T03:19:29.000Z">
+<meta property="article:modified_time" content="2023-11-08T11:47:31.726Z">
+<meta property="article:author" content="crown">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Redis初识 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Crown</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Redis初识"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-11-04 11:19" pubdate>
+          2023年11月4日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          30 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Redis初识</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h4 id="Redis入门"><a href="#Redis入门" class="headerlink" title="Redis入门"></a>Redis入门</h4><h5 id="是什么"><a href="#是什么" class="headerlink" title="是什么"></a>是什么</h5><ul>
+<li><strong>Remote Dictionary Server</strong>（远程数据服务） </li>
+<li><strong>C语言编写</strong></li>
+<li><strong>一种支持key-value等多种数据结构的存储系统</strong></li>
+<li>**内存高速缓存数据库 **</li>
+</ul>
+<h5 id="为什么"><a href="#为什么" class="headerlink" title="为什么"></a>为什么</h5><p>良好的特性</p>
+<ul>
+<li><strong>读写性能优异</strong><ul>
+<li>Redis能读的速度是110000次&#x2F;s,写的速度是81000次&#x2F;s 。</li>
+</ul>
+</li>
+<li><strong>数据类型丰富</strong><ul>
+<li>Redis支持二进制案例的 Strings, Lists, Hashes, Sets 及 Ordered Sets 数据类型操作。</li>
+</ul>
+</li>
+<li><strong>原子性</strong><ul>
+<li>Redis的所有操作都是原子性的，同时Redis还支持对几个操作全并后的原子性执行。</li>
+</ul>
+</li>
+<li><strong>丰富的特性</strong><ul>
+<li>Redis支持 publish&#x2F;subscribe, 通知, key 过期等特性。</li>
+</ul>
+</li>
+<li><strong>持久化</strong><ul>
+<li>Redis支持RDB, AOF等持久化方式</li>
+</ul>
+</li>
+<li><strong>发布订阅</strong><ul>
+<li>Redis支持发布&#x2F;订阅模式</li>
+</ul>
+</li>
+<li><strong>分布式</strong><ul>
+<li>Redis Cluster</li>
+</ul>
+</li>
+</ul>
+<h5 id="干什么"><a href="#干什么" class="headerlink" title="干什么"></a>干什么</h5><p>常见应用场景如下</p>
+<ul>
+<li><p><strong>热点数据缓存</strong></p>
+<p>读写性能优异适合缓存</p>
+<ul>
+<li><p>数据实时性要求不高时</p>
+<p>读取前，先去读Redis，如果没有数据，读取数据库，将数据拉入Redis</p>
+<p>不足：缓存击穿问题（极端：请求一个不存在的数据，Redis相当于不存在），实时性较差（找你要你没有说等你找到）</p>
+</li>
+<li><p>字典表等数据量不大的数据</p>
+<p>插入数据时，同时写入Redis</p>
+<p>不足：开发时不方便统一处理</p>
+</li>
+</ul>
+</li>
+<li><p><strong>限时业务</strong></p>
+<p>使用expire命令设置一个键的生存时间，到时间后Redis会删除它 。通过查询该数据是否存在判断当前业务是否过时</p>
+</li>
+<li><p><strong>计数器相关问题</strong></p>
+<p>incrby命令可以实现原子性的递增 </p>
+</li>
+<li><p><strong>分布式锁</strong></p>
+<p>Redis的setnx命令进行，setnx：”set if not exists”就是如果不存在则成功设置缓存同时返回1，否则返回0**</p>
+</li>
+<li><p><strong>延时操作</strong></p>
+<p>由于Redis自2.8.0之后版本提供Keyspace Notifications功能，允许客户订阅Pub&#x2F;Sub频道，以便以某种方式接收影响Redis数据集的事件。 所以我们对于上面的需求就可以用以下解决方案，我们在订单生产时，设置一个key，同时设置10分钟后过期， 我们在后台实现一个监听器，监听key的实效，监听到key失效时将后续逻辑加上。</p>
+<p>当然我们也可以利用rabbitmq、activemq等消息中间件的延迟队列服务实现该需求。</p>
+</li>
+<li><p><strong>排行榜相关问题</strong></p>
+<p>关系型数据库在排行榜方面查询速度普遍偏慢，所以可以借助Redis的SortedSet进行热点数据的排序。</p>
+<p>比如点赞排行榜，做一个SortedSet, 然后以用户的openid作为上面的username, 以用户的点赞数作为上面的score, 然后针对每个用户做一个hash, 通过zrangebyscore就可以按照点赞数获取排行榜，然后再根据username获取用户的hash信息，这个当时在实际运用中性能体验也蛮不错的。简单来说就是把排序的实现放到Redis中实现。</p>
+</li>
+<li><p><strong>点赞、好友等相互关系的存储</strong></p>
+<p>Redis 利用集合的一些命令，比如求交集、并集、差集等。</p>
+<p>在微博应用中，每个用户关注的人存在一个集合中，就很容易实现求两个人的共同好友功能。</p>
+</li>
+<li><p><strong>简单队列</strong></p>
+<p>由于Redis有list push和list pop这样的命令，所以能够很方便的执行队列操作 。</p>
+</li>
+</ul>
+<hr>
+<h5 id="Redis基础数据类型"><a href="#Redis基础数据类型" class="headerlink" title="Redis基础数据类型"></a>Redis基础数据类型</h5><p>​	首先Redis是以key-value形式存储数据，而key一致为字符串。所以我们讨论其数据结构时一般是指其存储值的数据类型。</p>
+<p>​	Redis常用5种数据类型：String，List，Set，Zset，Hash。注意不同的数据类型有不同的操作命令。</p>
+<ul>
+<li><p><strong>String</strong></p>
+<blockquote>
+<p>String是二进制安全的，即Redis的String类型可以包含任何数据。如数字，字符串，JPG图片或者序列化的对象。</p>
+</blockquote>
+<p>其常用命令：</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+<th>范例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>set</td>
+<td>添加给定键及其对应给定值</td>
+<td>set <key> <value></td>
+</tr>
+<tr>
+<td>del</td>
+<td>删除存储在给定键的值</td>
+<td>del <key></td>
+</tr>
+<tr>
+<td>incr</td>
+<td>将存储在给定键的值加1，要求存储的值可以表示为整数</td>
+<td>incr <key></td>
+</tr>
+<tr>
+<td>decr</td>
+<td>将存储在给定键的值减1，要求存储的值可以表示为整数</td>
+<td>decr <key></td>
+</tr>
+<tr>
+<td>incrby</td>
+<td>将存储在给定键的值加指定值，要求存储的值可以表示为整数</td>
+<td>incrby <key></td>
+</tr>
+<tr>
+<td>decrby</td>
+<td>将存储在给定键的值减指定值，要求存储的值可以表示为整数</td>
+<td>decrby <key></td>
+</tr>
+<tr>
+<td>get</td>
+<td>获取存储在给定键的值</td>
+<td>get <key></td>
+</tr>
+</tbody></table>
+<p>适用场景：</p>
+<ul>
+<li>缓存：把常用信息，字符串，图片或者视频等信息放入Redis中，其作为缓存层，MySQL作为持久化层，降低MySQL的读写压力。</li>
+<li>session：常见方案Spring Session+Redis实现session共享。</li>
+<li>计数器：Redis是单线程模型，一个命令执行完才会执行下一个，同时数据转移到另一个数据源。</li>
+</ul>
+</li>
+<li><p><strong>List列表</strong></p>
+<blockquote>
+<p>Redis用双端链表实现的List，列表包含元素可以重复。</p>
+</blockquote>
+<p>其常用命令：</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+<th>范例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>rpush</td>
+<td>将给定值推入到列表右端</td>
+<td>rpush <key> <value></td>
+</tr>
+<tr>
+<td>lpush</td>
+<td>将给定值推入到列表左端</td>
+<td>lpush <key> <value></td>
+</tr>
+<tr>
+<td>rpop</td>
+<td>从列表的右端弹出一个值，并返回被弹出的值</td>
+<td>rpop <key></td>
+</tr>
+<tr>
+<td>lpop</td>
+<td>从列表的左端弹出一个值，并返回被弹出的值</td>
+<td>lpop <key></td>
+</tr>
+<tr>
+<td>lrange</td>
+<td>获取列表在给定范围上的所有值</td>
+<td>lrange lrange <key> <index>-<index></td>
+</tr>
+<tr>
+<td>lindex</td>
+<td>通过索引获取列表中的元素。你也可以使用负数下标，以 -1 表示列表的最后一个元素， -2 表示列表的倒数第二个元素，以此类推。</td>
+<td>lindex <key> <index></td>
+</tr>
+</tbody></table>
+<p>适用场景：</p>
+<ul>
+<li><strong>微博TimeLine</strong>: 有人发布微博，用lpush加入时间轴，展示新的列表信息。</li>
+<li><strong>消息队列</strong></li>
+</ul>
+</li>
+<li><p><strong>Set集合</strong></p>
+</li>
+</ul>
+<blockquote>
+<p>Redis 的 Set 是 String 类型的无序集合。集合成员是唯一的，集合中不能出现重复的数据。其通过哈希表实现的，故添加，删除，查找的复杂度都是O（1）。 </p>
+</blockquote>
+<p>​	其常用命令：</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+<th>范例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>sadd</td>
+<td>向集合中添加任意成员</td>
+<td>sadd <key> <value></td>
+</tr>
+<tr>
+<td>scard</td>
+<td>获取集合的成员数</td>
+<td>scard <key></td>
+</tr>
+<tr>
+<td>smembers</td>
+<td>获取集合的所有成员</td>
+<td>smembers <key></td>
+</tr>
+<tr>
+<td>sismember</td>
+<td>判断member元素是否为该集合的成员</td>
+<td>sismember <key> <value></td>
+</tr>
+</tbody></table>
+<p>​	适用场景：</p>
+<ul>
+<li><ul>
+<li><strong>标签</strong>（tag）,给用户添加标签，或者用户给消息添加标签，这样有同一标签或者类似标签的可以给推荐关注的事或者关注的人。</li>
+<li><strong>点赞，或点踩，收藏等</strong>，可以放到set中实现。</li>
+</ul>
+</li>
+<li><strong>Hash散列</strong></li>
+</ul>
+<blockquote>
+<p>Redis hash 是一个 string 类型的 field（字段） 和 value（值） 的映射表，hash 特别适合用于存储对象。键无序且唯一。 </p>
+</blockquote>
+<p>​	其常用命令：</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+<th>范例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>hset</td>
+<td>添加键值对</td>
+<td>hset <hash-key> <sub-key> <value></td>
+</tr>
+<tr>
+<td>hget</td>
+<td>获取指定散列键的值</td>
+<td>hget <hash-key> <sub-key></td>
+</tr>
+<tr>
+<td>hgetall</td>
+<td>获取散列中包含的所有键值对</td>
+<td>hgetall <hash-key></td>
+</tr>
+<tr>
+<td>hdel</td>
+<td>如果给定键存在散列中，删除该键值对</td>
+<td>hdel <hash-key> <sub-key></td>
+</tr>
+</tbody></table>
+<p>​	适用场景：</p>
+<ul>
+<li><ul>
+<li><strong>缓存</strong>： 能直观，相比string更节省空间，的维护缓存信息，如用户信息，视频信息等。</li>
+</ul>
+</li>
+<li><p><strong>Zset有序集合</strong></p>
+<blockquote>
+<p>Redis 有序集合和集合一样也是 string 类型元素的集合,且不允许重复的成员。不同的是每个元素都会关联一个 double 类型的分数。redis 正是通过分数来为集合中的成员进行从小到大的排序。 </p>
+</blockquote>
+<pre><code class="hljs">  其常用命令:
+</code></pre>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+<th>范例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>zadd</td>
+<td>将一个带有给定分值的成员添加到有序集合里</td>
+<td>zadd <zset-key> <score> <member></td>
+</tr>
+<tr>
+<td>zrange</td>
+<td>返回有序集合里指定区间的成员</td>
+<td>ZRANGE <zset-key> <start> <stop> [WITHSCORES]</td>
+</tr>
+<tr>
+<td>zrem</td>
+<td>如果给定元素成员存在该有序集合，删除该元素</td>
+<td>zrem <zset-kry> <member></td>
+</tr>
+</tbody></table>
+<p>​	适用场景：</p>
+<ul>
+<li><ul>
+<li><strong>排行榜</strong>：有序集合经典使用场景。例如小说视频等网站需要对用户上传的小说视频做排行榜，榜单可以按照用户关注数，更新时间，字数等打分，做排行。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p>#####Redis的3种特殊类型</p>
+<p>​	特殊场景下的更适用选择</p>
+<ul>
+<li><p><strong>HyperLogLogs（ 基数统计）</strong> </p>
+<p>统计集合中的不重复成员数目。通俗来讲我们可以把基数统计放到代码里实现，即先读取Redis里的数据然后通过Java完成，而现在Redis自己就能实现这个功能了，虽然这个功能存在误差0.81%，但是就很适合允许一定容错的业务场景。</p>
+</li>
+<li><p><strong>Bitmap（位存储）</strong></p>
+<p>操作二进制位来进行记录，只有0和1两个状态。其和Java的boolean功能相似，可以用其存储。</p>
+</li>
+<li><p><strong>geospatial（地理位置）</strong></p>
+<p>用于存储地理位置的信息（经纬度），并配有常用数据操作。底层使用Redis的Zset实现。</p>
+<p>这里给出一个如果开发地图的相关业务需要的网站<a target="_blank" rel="noopener" href="http://www.jsons.cn/lngcode">http://www.jsons.cn/lngcode</a></p>
+</li>
+</ul>
+<hr>
+<p>#####Redis新增数据类型-stream</p>
+<blockquote>
+<p>Redis5.0 中还增加了一个数据类型Stream，它借鉴了Kafka的设计，是一个新的强大的支持多播的可持久化的消息队列。 </p>
+</blockquote>
+<p>基于Redis实现消息队列的几种方法：</p>
+<ul>
+<li><p><strong>PUB&#x2F;SUB模式，订阅&#x2F;发布模式</strong></p>
+<p>简单来说就是发布者（PUB）将信息推送到频道（消息队列），订阅者通过订阅某个频道（消息队列）接收信息。</p>
+<p>不足：<code>无法持久化</code>  <code>不可靠，信息丢失</code></p>
+</li>
+<li><p>基于<strong>List LPUSH+BRPOP</strong> 或者 <strong>基于Sorted-Set</strong>的实现 </p>
+<p>支持持久化</p>
+<p>不足：<code>不支持多播，分组消费</code></p>
+</li>
+<li><p><strong>stream</strong></p>
+</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Redis/" class="print-no-link">#Redis</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Redis初识</div>
+      <div>http://example.com/2023/11/04/Redis初识/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>crown</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年11月4日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/11/14/%E8%B4%A2%E8%B4%A2/" title="财财">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">财财</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/11/04/%E5%BC%80%E5%8F%91%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E5%BA%93/" title="开发常用工具库">
+                        <span class="hidden-mobile">开发常用工具库</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
